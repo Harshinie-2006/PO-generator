@@ -8,7 +8,7 @@ import { sendLowStockAlert } from '../utils/emailService.js';
  */
 const createBill = async (req, res) => {
     try {
-        const { items, customerName, paymentMethod } = req.body;
+        const { items, customerName, customerPhone, paymentMethod } = req.body;
 
         if (!items || items.length === 0) {
             return res.status(400).json({
@@ -46,14 +46,22 @@ const createBill = async (req, res) => {
                 product: product._id,
                 sku: product.sku,
                 name: product.name,
+                unit: product.unit,
                 quantity: item.quantity,
                 unitPrice: product.unitPrice,
                 total: itemTotal
             });
 
             // Decrease stock
+            // Use findOneAndUpdate to bypass validation of other fields like 'unit' which might have historical invalid values
+            await Product.findOneAndUpdate(
+                { _id: product._id },
+                { $inc: { currentStock: -item.quantity } },
+                { runValidators: false }
+            );
+
+            // Refetch product to check currentStock if needed
             product.currentStock -= item.quantity;
-            await product.save();
 
             // Check if stock is low after update
             if (product.currentStock <= product.reorderPoint) {
@@ -77,6 +85,7 @@ const createBill = async (req, res) => {
             tax,
             totalAmount,
             customerName,
+            customerPhone,
             paymentMethod,
             createdBy: req.session.userId // record who made the bill
         });
@@ -89,9 +98,10 @@ const createBill = async (req, res) => {
 
     } catch (error) {
         console.error('Create bill error:', error);
+        console.trace(error); 
         res.status(500).json({
             success: false,
-            message: 'Server error creating bill'
+            message: error.message || 'Server error creating bill'
         });
     }
 };

@@ -10,6 +10,7 @@ import vendorRoutes from './routes/vendors.js';
 import productRoutes from './routes/products.js';
 import purchaseOrderRoutes from './routes/purchaseOrders.js';
 import billingRoutes from './routes/billing.js';
+import paymentRoutes from './routes/payment.js';
 
 // Load environment variables
 dotenv.config();
@@ -22,7 +23,7 @@ connectDB();
 
 // Middleware
 app.use(cors({
-    origin: ['http://localhost:5173', 'http://localhost:5174'],
+    origin: ['http://localhost:5173', 'http://localhost:5174', process.env.FRONTEND_URL],
     credentials: true
 }));
 
@@ -48,6 +49,7 @@ app.use('/api/vendors', vendorRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/purchase-orders', purchaseOrderRoutes);
 app.use('/api/billing', billingRoutes);
+app.use('/api/payment', paymentRoutes);
 
 // Health check route
 app.get('/api/health', (req, res) => {

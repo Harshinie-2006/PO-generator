@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // Create axios instance with base configuration
 const api = axios.create({
-    baseURL: "http://localhost:5002/api",
+    baseURL: import.meta.env.VITE_API_URL || "http://localhost:5002/api",
     withCredentials: true
 });
 
@@ -60,11 +60,12 @@ export const productsAPI = {
 // Purchase Orders API
 export const purchaseOrdersAPI = {
     generate: () => api.post('/purchase-orders/generate'),
+    generateCustom: (items) => api.post('/purchase-orders/custom', { items }),
     getAll: (status) => api.get('/purchase-orders', { params: { status } }),
     getById: (id) => api.get(`/purchase-orders/${id}`),
     update: (id, data) => api.put(`/purchase-orders/${id}`, data),
     send: (id, deliveryMethod) => api.post(`/purchase-orders/${id}/send`, { deliveryMethod }),
-    getPDF: (id) => `http://localhost:5002/api/purchase-orders/${id}/pdf`,
+    getPDF: (id) => `${import.meta.env.VITE_API_URL || "http://localhost:5002/api"}/purchase-orders/${id}/pdf`,
     delete: (id) => api.delete(`/purchase-orders/${id}`)
 };
 
@@ -73,6 +74,12 @@ export const billingAPI = {
     create: (data) => api.post('/billing', data),
     getAll: () => api.get('/billing'),
     getById: (id) => api.get(`/billing/${id}`)
+};
+
+// Payment API
+export const paymentAPI = {
+    createOrder: (data) => api.post('/payment/create-order', data),
+    verifyPayment: (data) => api.post('/payment/verify', data)
 };
 
 export default api;
