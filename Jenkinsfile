@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_REGISTRY = "your-docker-username"
+        DOCKER_REGISTRY = "harshinielamvaluthy"
         BACKEND_IMAGE = "po-generator-backend"
         FRONTEND_IMAGE = "po-generator-frontend"
         KUBECONFIG_CREDENTIALS_ID = 'kubeconfig'

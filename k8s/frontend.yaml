@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: frontend
-        image: your-docker-username/po-generator-frontend:IMAGE_TAG
+        image: harshinielamvaluthy/po-generator-frontend:IMAGE_TAG
         ports:
         - containerPort: 80
 ---
