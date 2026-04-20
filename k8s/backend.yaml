@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: po-backend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: po-backend
+  template:
+    metadata:
+      labels:
+        app: po-backend
+    spec:
+      containers:
+      - name: backend
+        image: your-docker-username/po-generator-backend:IMAGE_TAG
+        ports:
+        - containerPort: 5000
+        env:
+        - name: PORT
+          value: "5000"
+        - name: MONGO_URI
+          value: "mongodb://mongodb-service:27017/po-generator"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend-service
+spec:
+  selector:
+    app: po-backend
+  ports:
+    - protocol: TCP
+      port: 5000
+      targetPort: 5000

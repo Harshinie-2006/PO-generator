@@ -1,0 +1,41 @@
+
+services:
+  backend:
+    build: ./backend
+    container_name: po-backend
+    ports:
+      - "5000:5000"
+    environment:
+      - PORT=5000
+      - MONGODB_URI=mongodb://mongodb:27017/po-generator
+    depends_on:
+      - mongodb
+    networks:
+      - po-network
+
+  frontend:
+    build: ./frontend
+    container_name: po-frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    networks:
+      - po-network
+
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb
+    ports:
+      - "27018:27017"
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - po-network
+
+networks:
+  po-network:
+    driver: bridge
+
+volumes:
+  mongodb_data:
